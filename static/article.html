@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>市场信息-朝鲜国际健康及体育科技展览会</title>
+    <meta name="description" content="朝鲜国际健康及体育科技展览会市场信息，朝鲜国家级涉外贸易展会项目官方网站。中国企业开拓朝鲜市场的绝佳平台。" />
+    <!-- 关键字 -->
+    <meta name="keywords" content="朝鲜展会，朝鲜市场信息，境外展会，境外商机，朝鲜经济，出口目的地，朝鲜展览会，朝鲜博览会" />
+    <!-- 引入favicon图标 -->
+    <link rel="shortcut icon" href="favicon.ico" />
+    <!-- 引入vue框架 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- vue-router工具 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue-router/3.4.8/vue-router.js"></script>
+    <!-- 引入axios -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <!-- 引入初始化样式文件 -->
+    <link rel="stylesheet" href="css/base.css">
+    <!-- 引入公共的样式文件 -->
+    <link rel="stylesheet" href="css/common.css">
+    <!-- 引入articles样式文件 -->
+    <link rel="stylesheet" href="css/article.css">
+</head>
+<body>
+<header>
+    <div class="w">
+        <h1 id="exhibition-name" class="fl"> <a href="index.html">朝鲜国际健康及体育科技展览会</a> </h1>
+        <div id="exhibitor-service-button" class="fr"></div>
+        <div id="buyer-register-button" class="fr"></div>
+    </div>
+</header>
+
+<div id="app" v-if="article!=null">
+<!-- 面包屑导航 -->
+<div id="crumbs" class="w">
+    <p> <a href="index.html">首页</a> > <a href="articles.html">市场信息</a> >  {{ article.title }} </p>
+</div>
+<!-- 正文窗口 -->
+<div class="w">
+    <div id="article-container">
+        <article>
+            <H2>{{ article.title }}</H2>
+            <p id="desc">{{ article.desc }}</p>
+            <img style="border-radius: 10px;" :src="article.abanner" alt="">
+            <div id="article">
+                <p v-html="article.content"></p>
+            </div>
+        </article>
+        <div id="pager" class="clearfix">
+            <a v-show="aid!=1" :href="'article.html#/?aid=' + parseInt(aid)" @click="minus_aid(); fetch_data()" id="right" class="fl"> <<上一篇 </a>
+            <a v-show="aid!=count" :href="'article.html#/?aid=' + parseInt(aid)" @click="plus_aid(); fetch_data()" id="right" class="fr"> 下一篇>> </a>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer>
+    <div class="w">
+        <p id="contact">
+            联系方式：<br>
+            北京逸宸国际展览有限公司 <br>
+            联系人：刘先生&nbsp&nbsp&nbsp&nbsp电话：15810749155（同微信）<br>
+            地址：北京市海淀区北四环中路209号
+        </p>
+        <p id="copyright">Copyright © 2020 dprkshow.top 版权所有 | <a href="https://beian.miit.gov.cn/">京 ICP 备 XXXX 号</a> | <a href="http://www.beian.gov.cn/portal/registerSystemInfo">京公网安备 XXXX 号</a></p>
+    </div>
+</footer>
+
+<script>
+    const router = new VueRouter();
+    var app = new Vue({
+        el: "#app",
+        router: router,
+        data: {
+            article: null,
+            aid: "",
+            count: 0, 
+        },
+        mounted: function () {
+            this.init_aid();
+            this.fetch_data();
+        },
+        methods: {
+            init_aid: function () {
+                if (this.$route.query.aid) {
+                    this.aid = this.$route.query.aid;
+                } else {
+                    this.aid = "1";
+                    this.$route.query.aid = this.aid;
+                }
+            },
+            plus_aid: function () {
+                this.aid = parseInt(this.$route.query.aid) + 1;
+            },
+            minus_aid: function () {
+                this.aid = parseInt(this.$route.query.aid) - 1;
+            },
+            fetch_data: function () {
+                that=this;
+                var url="http://localhost:9001/api/article/" + that.aid +"/";
+                axios.get(url).then(
+                    function (response) {
+                        that.article = response.data;
+                    },
+                    function (err) {
+                        console.log(err);
+                    }
+                )
+                axios.get("http://localhost:9001/api/articles/").then(
+                    function (response) {
+                        that.count = response.data.count;                        
+                    },
+                    function (err) {
+                        console.log();
+                    }
+                )
+            },
+        }
+    })
+</script>
+
+</body>
+</html>
